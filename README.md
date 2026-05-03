@@ -133,6 +133,20 @@ Three pain points it removes:
                               Claude copies → workspace/output.png
 ```
 
+## Verified — trust record
+
+This skill ships with a reproducible test suite. The last verified run is committed at [`tests/RESULTS.md`](tests/RESULTS.md), so you can see exactly what was checked, when, and on which platform without running anything.
+
+```bash
+# Run the full suite (requires `codex login` with ChatGPT)
+python tests/run.py
+
+# Skip the E2E image-gen step (still validates metadata, URLs, codex install)
+python tests/run.py --skip-image
+```
+
+The suite covers metadata correctness (frontmatter spec compliance, no fictitious slash aliases), URL availability (install one-liners actually resolve), codex prerequisites (installed + logged in), and an end-to-end image generation that proves the no-API-key path works through the documented Windows copy-workaround. See [`tests/README.md`](tests/README.md) for the full list of checks and how to add new ones.
+
 ## Compatibility matrix
 
 | Codex CLI | Image gen | Code review | Code impl | Notes |
