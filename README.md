@@ -29,11 +29,15 @@ This skill teaches Claude Code the right prompt shape to unlock it — plus wire
 
 ## Three modes
 
-| Slash | What it does | Example |
+The skill exposes one slash command, `/codex-cli`, with a subcommand as the first argument:
+
+| Invocation | What it does | Example |
 |---|---|---|
-| `/codex review` | Hands the diff to Codex for a second-opinion review | `/codex review --base main` |
-| `/codex impl <prompt>` | Hands a coding task to Codex non-interactively | `/codex impl "add JWT refresh to api/auth.ts"` |
-| `/codex image <prompt>` | Generates an image via Codex's built-in tool — no API key | `/codex image "isometric CPU diagram, neon"` |
+| `/codex-cli review` | Hands the diff to Codex for a second-opinion review | `/codex-cli review --base main` |
+| `/codex-cli impl <prompt>` | Hands a coding task to Codex non-interactively | `/codex-cli impl "add JWT refresh to api/auth.ts"` |
+| `/codex-cli image <prompt>` | Generates an image via Codex's built-in tool — no API key | `/codex-cli image "isometric CPU diagram, neon"` |
+
+You can also just describe what you want in natural language ("ask codex to review my diff", "have codex generate an isometric CPU diagram"). The skill's `when_to_use` field tells Claude to load it on those phrasings.
 
 ## Install
 
@@ -58,7 +62,7 @@ Drop `SKILL.md` into your Claude Code skills directory:
 | Windows | `%USERPROFILE%\.claude\skills\codex-cli\SKILL.md` |
 | macOS / Linux | `~/.claude/skills/codex-cli/SKILL.md` |
 
-Restart Claude Code. The skill auto-registers — type `/codex` to confirm.
+Restart Claude Code. The skill auto-registers — type `/codex-cli` to confirm.
 
 ## Prerequisites
 
@@ -71,7 +75,7 @@ Restart Claude Code. The skill auto-registers — type `/codex` to confirm.
 ### 1. Code review on uncommitted changes
 
 ```
-/codex review
+/codex-cli review
 ```
 
 Claude takes Codex's findings, regroups them by **CRITICAL / HIGH / MEDIUM / LOW**, and writes them back as a structured review with `file:line` citations — instead of dumping raw output. If Codex contradicts something Claude already verified, it flags the conflict instead of silently siding with Codex.
@@ -79,7 +83,7 @@ Claude takes Codex's findings, regroups them by **CRITICAL / HIGH / MEDIUM / LOW
 ### 2. Hand off a coding task
 
 ```
-/codex impl "add a /healthz endpoint to api/server.ts that returns 200 if redis is reachable"
+/codex-cli impl "add a /healthz endpoint to api/server.ts that returns 200 if redis is reachable"
 ```
 
 Runs `codex exec -s workspace-write -C <repo>`, sandboxed to your workspace. Network access on, writes outside the repo blocked.
@@ -87,7 +91,7 @@ Runs `codex exec -s workspace-write -C <repo>`, sandboxed to your workspace. Net
 ### 3. Generate an image
 
 ```
-/codex image "isometric data center, glowing fiber, dark background, 1024x1024"
+/codex-cli image "isometric data center, glowing fiber, dark background, 1024x1024"
 ```
 
 → Claude tells Codex to generate it (without naming an API).
@@ -106,7 +110,7 @@ Three pain points it removes:
 ## How it actually works
 
 ```
-┌─────────────────┐    /codex image "..."     ┌──────────────────┐
+┌─────────────────┐  /codex-cli image "..."   ┌──────────────────┐
 │  Claude Code    │ ────────────────────────▶ │  Skill (this)    │
 └─────────────────┘                           └────────┬─────────┘
                                                        │
